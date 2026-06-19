@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: rcfield-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_DATABASE:-rcfield}
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-root}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - rcfield-network
+
+  rcfield-api:
+    build:
+      context: ./rcfield-api
+      dockerfile: Dockerfile
+    container_name: rcfield-api
+    restart: always
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_DATABASE: ${DB_DATABASE:-rcfield}
+      JWT_SECRET: ${JWT_SECRET:-rcfield-secret-key}
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - rcfield-network
+
+  rcfield-admin:
+    build:
+      context: ./rcfield-admin
+      dockerfile: Dockerfile
+    container_name: rcfield-admin
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - rcfield-api
+    networks:
+      - rcfield-network
+
+volumes:
+  mysql_data:
+
+networks:
+  rcfield-network:
+    driver: bridge
