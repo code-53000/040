@@ -21,6 +21,11 @@ export class FlightBookingController {
     return this.bookingService.findAll(query);
   }
 
+  @Get('runways')
+  async getActiveRunways() {
+    return this.bookingService.getActiveRunways();
+  }
+
   @Get('available-slots')
   async getAvailableSlots(@Query('runwayId') runwayId: number, @Query('date') date: string) {
     return this.bookingService.getAvailableSlots(runwayId, date);

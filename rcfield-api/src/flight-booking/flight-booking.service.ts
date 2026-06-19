@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { FlightBooking } from '../entities/flight-booking.entity';
+import { Runway } from '../entities/runway.entity';
 import { ConflictCheckService } from '../conflict-check/conflict-check.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 
@@ -10,8 +11,14 @@ export class FlightBookingService {
   constructor(
     @InjectRepository(FlightBooking)
     private bookingRepository: Repository<FlightBooking>,
+    @InjectRepository(Runway)
+    private runwayRepository: Repository<Runway>,
     private conflictCheckService: ConflictCheckService,
   ) {}
+
+  async getActiveRunways() {
+    return this.runwayRepository.find({ where: { status: 'active' }, order: { code: 'ASC' } });
+  }
 
   async create(memberId: number, dto: CreateBookingDto): Promise<FlightBooking> {
     await this.conflictCheckService.validateBooking(

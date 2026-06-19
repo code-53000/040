@@ -3,12 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FlightBookingController } from './flight-booking.controller';
 import { FlightBookingService } from './flight-booking.service';
 import { FlightBooking } from '../entities/flight-booking.entity';
+import { Runway } from '../entities/runway.entity';
 import { ConflictCheckModule } from '../conflict-check/conflict-check.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FlightBooking]),
+    TypeOrmModule.forFeature([FlightBooking, Runway]),
     ConflictCheckModule,
     AuthModule,
   ],

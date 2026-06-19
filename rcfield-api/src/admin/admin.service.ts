@@ -47,6 +47,10 @@ export class AdminService {
     return this.runwayRepository.find({ order: { code: 'ASC' } });
   }
 
+  async getAllHangarSlots() {
+    return this.hangarSlotRepository.find({ order: { row: 'ASC', column: 'ASC' } });
+  }
+
   async createHangarSlot(dto: any) {
     const slot = this.hangarSlotRepository.create(dto);
     return this.hangarSlotRepository.save(slot);

@@ -40,7 +40,7 @@ export class AdminController {
 
   @Get('hangar-slots')
   async getAllHangarSlots() {
-    return this.adminService.getAllRunways();
+    return this.adminService.getAllHangarSlots();
   }
 
   @Put('hangar-slots/:id')

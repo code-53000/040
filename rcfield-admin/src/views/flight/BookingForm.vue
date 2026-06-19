@@ -62,7 +62,7 @@ const rules = {
 
 onMounted(async () => {
   const [runwaysRes, aircraftRes] = await Promise.all([
-    api.get('/admin/runways'),
+    api.get('/flight-bookings/runways'),
     api.get('/hangar/my-aircraft'),
   ])
   runways.value = runwaysRes.data || []
